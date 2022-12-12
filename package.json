@@ -1,0 +1,19 @@
+{
+    "name": "08-rest-server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node app.js",
+        "start:dev": "nodemon app.js"
+    },
+    "keywords": [],
+    "author": "kmorfo",
+    "license": "GNU",
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "express": "^4.18.2"
+    }
+}
