@@ -36,7 +36,8 @@ const UserSchema = Schema({
 //De este modo podemos personalizar la respuesta, asi como quitar elementos que no deseemos que se envien
 UserSchema.methods.toJSON = function () {
     //...object son las demas propiedades
-    const { __v, password, ...object } = this.toObject();
+    const { __v, _id, password, ...object } = this.toObject();
+    object.uid = _id;
     return object;
 };
 

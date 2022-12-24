@@ -2,7 +2,7 @@ const { response } = require("express");
 const bcryptjs = require("bcryptjs");
 
 const User = require("../models/user");
-const { existEmail } = require("../helpers/db-validators");
+const { generarJWT } = require("../helpers/generar-jwt");
 
 const usuariosGet = async (req, res = response) => {
     //Obtenemos los parametros enviados del get, en este caso son opcionales
@@ -62,22 +62,28 @@ const usuariosPost = async (req, res = response) => {
     const salt = bcryptjs.genSaltSync(); //Se puede indicar el valor deseado, 10 default
     user.password = bcryptjs.hashSync(password, salt);
 
+    //Generamos el JWT
+    const token = await generarJWT(user.id);
+
     //Guardar en la BD
     user.save();
 
-    res.json({ msg: "post API - Controlador", user });
+    res.json({ msg: "post API - Controlador", user,token });
 };
 
 const usuariosDelete = async (req, res = response) => {
     const { id } = req.params;
+
     //Lo borramos fisicamente se perderia la integridad referencial si no se hace un cascade
     // const usuario = await User.findByIdAndDelete(id);
     // res.json({ msg: `El usuario con id :${id}se borro correctamente` });
 
     //Se cambia el estado a false
     const usuario = await User.findByIdAndUpdate(id, { estado: false });
+
     res.json({
-        msg: `El estado del usuario con id :${id}se establecio en FALSE`,
+        msg: `El estado del usuario con id :${id} se establecio en FALSE`,
+        usuario
     });
 };
 
