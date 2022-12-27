@@ -1,7 +1,8 @@
-const { Router } = require("express");
+const { Router, response, json } = require("express");
 const User = require("../models/user");
 const bcryptjs = require("bcryptjs");
 const { generarJWT } = require("../helpers/generar-jwt");
+const { googleVerify } = require("./google-verify");
 
 const login = async (req, res = response) => {
     //Extraemos los datos del body que nos envio el usuario
@@ -60,4 +61,43 @@ const renewToken = async (req, res = response) => {
     }
 };
 
-module.exports = { login, renewToken };
+const googleSignIn = async (req, res = response) => {
+    const { id_token } = req.body;
+
+    try {
+        const { name, img, email } = await googleVerify(id_token);
+
+        let user = await User.findOne({ email });
+        //Si el usuario no existe lo creamos en la BD
+        if (!user) {
+            const data = {
+                name,
+                email,
+                password: ":P",
+                img,
+                google: true,
+                role: "USER_ROLE",
+            };
+            user = new User(data);
+            await user.save();
+        }
+        //Si el usuario ya existe podriamos querer actualizar los datos necesarios
+
+        //Si el usuario tiene un estado en la BD en false se deniega el acceso
+        if (!user.estado)
+            return res
+                .status(401)
+                .json({ msg: "Hable con el adminsitrador, usuario bloqueado" });
+
+        //Generamos un JWT propio
+        const token = await generarJWT(user.id);
+
+        res.json({ user, token });
+    } catch (error) {
+        res.status(400).json({
+            msg: "El token no se pudo verificar",
+        });
+    }
+};
+
+module.exports = { login, renewToken, googleSignIn };
