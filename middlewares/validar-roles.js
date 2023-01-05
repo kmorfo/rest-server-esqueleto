@@ -2,12 +2,12 @@ const { response } = require("express");
 
 const isAdminRole = (req, res = response, next) => {
     //Comprobamos que tenemos los datos del usuario
-    if (!req.usuarioAuth)
+    if (!req.userAuth)
         return res
             .status(500)
             .json({ msg: "Se quiere verificar el rol sin validar el token" });
     //Obtenemos los datos del usuario
-    const { role, name } = req.usuarioAuth;
+    const { role, name } = req.userAuth;
 
     if (role != "ADMIN_ROLE")
         return res.status(401).json({
@@ -25,12 +25,12 @@ const isAdminRole = (req, res = response, next) => {
 const hasRole = (...roles) => {
     return (req, res, next) => {
         //Comprobamos que tenemos los datos del usuario
-        if (!req.usuarioAuth)
+        if (!req.userAuth)
             return res.status(500).json({
                 msg: "Se quiere verificar el rol sin validar el token",
             });
         //Obtenemos los datos del usuario
-        const { role, name } = req.usuarioAuth;
+        const { role, name } = req.userAuth;
 
         //se comprueba que el usuario tiene uno de los roles requeridos
         if (!roles.includes(role))

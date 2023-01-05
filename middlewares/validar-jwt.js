@@ -13,23 +13,23 @@ const validarJWT = async (req = request, res = response, next) => {
         const { uid } = jwt.verify(token, process.env.JWT_KEY);
 
         //Obtener los datos del usuario que corresponde con el uid
-        const usuarioAuth = await User.findById(uid);
+        const userAuth = await User.findById(uid);
 
         //Comprobamos que el usuario existe
-        if (!usuarioAuth)
+        if (!userAuth)
             return res.status(401).json({
                 msg: "Token no válido. - Usuario no existe",
             });
 
 
         //Se comprueba que el usuario esta activo
-        if (!usuarioAuth.estado)
+        if (!userAuth.estado)
             return res.status(401).json({
                 msg: "Token no válido. - Usuario no activo",
             });
 
         //Si queremos obtener los datos del usuario auth desde el controlador
-        req.usuarioAuth = usuarioAuth;
+        req.userAuth = userAuth;
 
         next();
     } catch (error) {
