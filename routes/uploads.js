@@ -4,6 +4,7 @@ const {
     cargarArchivo,
     updateImage,
     mostrarImagen,
+    updateImageCloudDinary
 } = require("../controllers/uploads");
 const { coleccionesPermitidas } = require("../helpers");
 const { validarCampos, validarArchivoSubir } = require("../middlewares");
@@ -43,5 +44,24 @@ router.get(
     ],
     mostrarImagen
 );
+
+/**
+ * Rutas para trabajar con las imagenes de CloudDinary
+ * NOTA -> se agrega a la ruta cd/ antes de los parametros /api/uploads/cd/coleccion/id
+ */
+router.put(
+    "/cd/:coleccion/:id",
+    [
+        validarArchivoSubir,
+        check("id", "No es un ID válido").isMongoId(),
+        //Validacion personalizada que controlara que coleccion este entre las permitidas
+        check("coleccion").custom((c) =>
+            coleccionesPermitidas(c, ["usuarios", "productos"])
+        ),
+        validarCampos,
+    ],
+    updateImageCloudDinary
+);
+
 
 module.exports = router;
