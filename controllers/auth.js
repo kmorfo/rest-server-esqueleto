@@ -2,7 +2,7 @@ const { Router, response, json } = require("express");
 const User = require("../models/user");
 const bcryptjs = require("bcryptjs");
 const { generarJWT } = require("../helpers/generar-jwt");
-const { googleVerify } = require("./google-verify");
+const { googleVerify } = require("../helpers/google-verify");
 
 const login = async (req, res = response) => {
     //Extraemos los datos del body que nos envio el usuario
